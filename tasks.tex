@@ -1,0 +1,497 @@
+\documentclass{article}
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{textcomp}
+\usepackage{color}
+\usepackage{xspace}
+\usepackage{multirow}
+\usepackage{amsmath,amsfonts,amsthm,amssymb,amsbsy,amstext,amscd,amsxtra,multicol}
+\usepackage{indentfirst}
+\usepackage{verbatim}
+\usepackage[left=2cm, right=2cm, top=2cm, bottom=2cm, bindingoffset=0cm]{geometry}
+
+\usepackage[pdf]{graphviz}
+\usepackage{morewrites}
+
+\usepackage{xpatch}
+\makeatletter
+\newcommand*{\addFileDependency}[1]{% argument=file name and extension
+  \typeout{(#1)}
+  \@addtofilelist{#1}
+  \IfFileExists{#1}{}{\typeout{No file #1.}}
+}
+\makeatother
+\xpretocmd{\digraph}{\addFileDependency{#2.dot}}{}{}
+
+
+\author{Трофимов И.С., группа А-05-19}
+\title{Домашняя работа по ТМВ №1}
+
+\begin{document}
+    \maketitle
+    
+    \section*{Задание 1}
+    Построить конечные автоматы, распознающие следующие языки\:
+    \begin{enumerate}
+        \item \(L_1=\{\omega\in\{a,b,c\}^* : |\omega|_c = 1 \} \)
+        \begin{center}
+            \digraph[scale=0.5]{g11}{
+                node [shape = none]; 0;
+                node [shape = doublecircle]; 2;
+    	        node [shape = circle];
+                rankdir=LR; 
+                0 -> 1;
+                1 -> 2 [label = "c"];
+                1 -> 1 [label = "a,b"];
+                2 -> 2 [label = "a,b"];
+            }   
+        \end{center}
+        \item \(L_2=\{\omega\in\{a,b\}^* : |\omega|_a \leqslant 2, |\omega|_b \geqslant 2 \} \) \\
+        Рассмотрим автоматы \(A=\{\omega\in\{a,b\}^* : |\omega|_a \leqslant 2 \} \) и \(B=\{\omega\in\{a,b\}^* : |\omega|_B \geqslant 2 \} \), распознающиие каждое условие по отдельности:
+        \begin{center}
+            \digraph[scale=0.5]{g121}{
+                node [shape = doublecircle]; 1 2 3;
+                node [shape = none]; 0;
+                rankdir=LR; 
+                0 -> 1;
+                1 -> 2 [label = "a"];
+                2 -> 3 [label = "a"];
+                1 -> 1 [label = "b"];
+                2 -> 2 [label = "b"];
+                3 -> 3 [label = "b"];
+            }
+            \digraph[scale=0.5]{g122}{
+                node [shape = doublecircle]; 3;
+                node [shape = none]; 0;
+                node [shape = circle]; 1 2;
+                rankdir=LR; 
+                0 -> 1;
+                1 -> 2 [label = "b"];
+                2 -> 3 [label = "b"];
+                1 -> 1 [label = "a"];
+                2 -> 2 [label = "a"];
+                3 -> 3 [label = "a,b"];
+            }
+        \end{center}
+        Тогда \(L_2=A \times B\). Терминальными состояниями в \(L_2\) будут вершины 13, 23 и 33. Теперь выпишем переходы для произведения автоматов в виде таблицы:
+        \begin{center}
+            \begin{tabular}{ |c|c|c|c| } 
+                \hline
+                \(A\) & \(B\) & переход по \(a\) & переход по \(b\) \\
+                \hline
+                1 & 1 & 21 & 12 \\
+                \hline
+                2 & 2 & 32 & 23 \\
+                \hline
+                3 & 3 & - & 33 \\
+                \hline
+                1 & 2 & 22 & 13 \\
+                \hline
+                2 & 3 & 33 & 23 \\
+                \hline
+                3 & 1 & - & 32 \\
+                \hline
+                1 & 3 & 23 & 13 \\
+                \hline
+                2 & 1 & 31 & 22 \\
+                \hline
+                3 & 2 & - & 33 \\
+                \hline
+                \end{tabular}
+            \end{center}
+        После прямого произведения двух автоматов получим окончательный ответ:
+        \begin{center}
+            \digraph[scale=0.5]{g123}{
+                node [shape = none]; 0;
+                node [shape = doublecircle]; 13 23 33;
+    	        node [shape = circle];
+                rankdir=LR; 
+                0 -> 11;
+                11 -> 21 [label = "a"];
+                11 -> 12 [label = "b"]; 
+                22 -> 32 [label = "a"];
+                22 -> 23 [label = "b"];
+                33 -> 33 [label = "b"];
+            	12 -> 22 [label = "a"];
+                12 -> 13 [label = "b"];
+            	23 -> 33 [label = "a"];
+                23 -> 23 [label = "b"];
+                31 -> 32 [label = "b"];
+            	13 -> 23 [label = "a"];
+                13 -> 13 [label = "b"];
+            	21 -> 31 [label = "a"];
+                21 -> 22 [label = "b"];
+                32 -> 33 [label = "b"];
+            }
+        \end{center}
+        
+        \item \(L_3=\{\omega\in\{a,b\}^*:|\omega|_a \neq |\omega|_b \}\) \\
+        Этот язык нельзя описать с помощью ДКА, т.к. для описания языка необходимо запоминать количество символов одного типа, что ДКА сделать не может.
+        \item \(L_4=\{\omega\in\{a,b\}^* : \omega \omega = \omega \omega \omega \} \) \\
+        Очевидно, что такой язык описывает только пустые слова:
+        \begin{center}
+            \digraph[scale=0.5]{g14}{
+                node [shape = none]; 0;
+                node [shape = circle]; 1;
+                rankdir=LR; 
+                0 -> 1;
+                1 -> 1 [label = "a,b"];
+            }  
+        \end{center}
+    \end{enumerate}
+    
+    \section*{Задание 2}
+    Построить конечные автоматы, распознающие слудеющие языки, используя прямое произведение:
+    \begin{enumerate}
+        \item \(L_1=\{\omega\in\{a,b\}^* : |\omega|_a \geqslant 2 \wedge |\omega|_b
+        \geqslant 2 \} \) \\
+        Рассмотрим автоматы \(A=\{\omega\in\{a,b\}^* : |\omega|_a \geqslant 2 \} \) и \(B=\{\omega\in\{a,b\}^* : |\omega|_b \geqslant 2 \} \), распознающиие каждое условие по отдельности:
+        \begin{center}
+            \digraph[scale=0.5]{g211}{
+                node [shape = none]; 0;
+                node [shape = doublecircle]; 3;
+                node [shape = circle]; 1 2;
+                rankdir=LR; 
+                0 -> 1;
+                1 -> 2 [label = "a"];
+                2 -> 3 [label = "a"];
+                1 -> 1 [label = "b"];
+                2 -> 2 [label = "b"];
+                3 -> 3 [label = "a,b"];
+            }
+            \digraph[scale=0.5]{g212}{
+                node [shape = none]; 0;
+                node [shape = doublecircle]; 3;
+                node [shape = circle]; 1 2;
+                rankdir=LR; 
+                0 -> 1;
+                1 -> 2 [label = "b"];
+                2 -> 3 [label = "b"];
+                1 -> 1 [label = "a"];
+                2 -> 2 [label = "a"];
+                3 -> 3 [label = "a,b"];
+            }    
+        \end{center}
+        Тогда \(L_1=A \times B\), имеем \(\Sigma=\{a,b\}\), \(s=11\) и \(T=\{33\}\). Теперь выпишем переходы для произведения автоматов в виде таблицы:
+        \begin{center}
+            \begin{tabular}{ |c|c|c|c| } 
+                \hline
+                \(A\) & \(B\) & переход по \(a\) & переход по \(b\) \\
+                \hline
+                1 & 1 & 21 & 12 \\
+                \hline
+                2 & 2 & 32 & 23 \\
+                \hline
+                3 & 3 & 33 & 33 \\
+                \hline
+                1 & 2 & 22 & 13 \\
+                \hline
+                2 & 3 & 33 & 23 \\
+                \hline
+                3 & 1 & 31 & 32 \\
+                \hline
+                1 & 3 & 23 & 13 \\
+                \hline
+                2 & 1 & 31 & 22 \\
+                \hline
+                3 & 2 & 32 & 33 \\
+                \hline
+            \end{tabular}
+        \end{center}
+        После прямого произведения двух автоматов получим окончательный ответ:
+        \begin{center}
+            \digraph[scale=0.5]{g213}{
+                node [shape = none]; 0;
+                node [shape = doublecircle]; 33;
+    	        node [shape = circle];
+                rankdir=LR; 
+                0 -> 11;
+                11 -> 21 [label = "a"];
+                11 -> 12 [label = "b"]; 
+                22 -> 32 [label = "a"];
+                22 -> 23 [label = "b"];
+                33 -> 33 [label = "a,b"];
+                
+            	12 -> 22 [label = "a"];
+                12 -> 13 [label = "b"];
+            	23 -> 33 [label = "a"];
+                23 -> 23 [label = "b"];
+                31 -> 31 [label = "a"];
+                31 -> 32 [label = "b"];
+                
+            	13 -> 23 [label = "a"];
+                13 -> 13 [label = "b"];
+            	21 -> 31 [label = "a"];
+                21 -> 22 [label = "b"];
+                32 -> 32 [label = "a"];
+                32 -> 33 [label = "b"];
+            }
+        \end{center}
+        
+        \item \(L_2=\{\omega \in\{a,b\}^* : |\omega| \geqslant 3 \wedge |\omega| \text{ нечётное} \} \) \\
+        Рассмотрим автоматы \(A=\{\omega \in\{a,b\}^* : |\omega| \geqslant 3\} \) и \(B=\{\omega \in\{a,b\}^* : |\omega| \text{ нечётное} \} \):
+        \begin{center}
+            \digraph[scale=0.5]{g221}{
+                node [shape = none]; 0;
+                node [shape = doublecircle]; 4;
+                node [shape = circle]; 1 2, 3;
+                rankdir=LR; 
+                0 -> 1;
+                1 -> 2 [label = "a, b"];
+                2 -> 3 [label = "a, b"];
+                3 -> 4 [label = "a, b"];
+                4 -> 4 [label = "a, b"];
+            }
+            \digraph[scale=0.5]{g212}{
+                node [shape = none]; 0;
+                node [shape = doublecircle]; 2;
+                node [shape = circle]; 1;
+                rankdir=LR; 
+                0 -> 1;
+                1 -> 2 [label = "a, b"];
+                2 -> 1 [label = "a, b"];
+            }    
+        \end{center}
+        Тогда \(L_2=A \times B\), имеем \(\Sigma=\{a,b\}\), \(s=11\) и \(T=\{33\}\). Переходы для произведения автоматов:
+        \begin{center}
+            \begin{tabular}{ |c|c|c| } 
+                \hline
+                \(A\) & \(B\) & переход по \(a\) или \(b\) \\
+                \hline
+                1 & 1 & 22 \\
+                \hline
+                2 & 1 & 32 \\
+                \hline
+                3 & 1 & 42 \\
+                \hline
+                4 & 1 & 42 \\
+                \hline
+                1 & 2 & 21 \\
+                \hline
+                2 & 2 & 31 \\
+                \hline
+                3 & 2 & 41 \\
+                \hline
+                4 & 2 & 41 \\
+                \hline
+            \end{tabular}
+        \end{center}
+        После прямого произведения двух автоматов получим окончательный ответ:
+        \begin{center}
+            \digraph[scale=0.5]{g223}{
+                node [shape = none]; 0;
+                node [shape = doublecircle]; 42;
+    	        node [shape = circle];
+                rankdir=LR; 
+                0 -> 11;
+                11 -> 22 [label = "a,b"];
+                21 -> 32 [label = "a,b"];
+                31 -> 42 [label = "a,b"];
+                41 -> 42 [label = "a,b"];
+                12 -> 21 [label = "a,b"];
+                22 -> 31 [label = "a,b"];
+                32 -> 41 [label = "a,b"];
+                42 -> 41 [label = "a,b"];
+            }
+        \end{center}
+        ДКА можно упростить, т.к. невозможно попасть в узлы 12, 21 и 32:
+        \begin{center}
+            \digraph[scale=0.5]{g224}{
+                node [shape = none]; 0;
+                node [shape = doublecircle]; 42;
+    	        node [shape = circle];
+                rankdir=LR; 
+                0 -> 11;
+                11 -> 22 [label = "a,b"];
+                31 -> 42 [label = "a,b"];
+                41 -> 42 [label = "a,b"];
+                22 -> 31 [label = "a,b"];
+                42 -> 41 [label = "a,b"];
+            }
+        \end{center}
+        С другой стороны, описать данный язык можно с помощью более компактного автомата, созданного "вручную":
+        \begin{center}
+            \digraph[scale=0.5]{g225}{
+                node [shape = none]; 0;
+                node [shape = doublecircle]; 4;
+    	        node [shape = circle];
+                rankdir=LR; 
+                0 -> 1;
+                1 -> 2 [label = "a,b"];
+                2 -> 3 [label = "a,b"];
+                3 -> 4 [label = "a,b"];
+                4 -> 3 [label = "a,b"];
+            }
+        \end{center}
+        
+        \item \(L_3=\{\omega \in\{a,b\}^* : |\omega|_a \text{ чётно} \wedge |\omega|_b \text{ кратно } 3 \} \) \\
+        Рассмотрим автоматы \(A=\{\omega \in\{a,b\}^* : |\omega|_a \text{ чётно} \} \) и \(B=\{\omega \in\{a,b\}^* : |\omega|_b \text{ кратно } 3 \} \):
+        \begin{center}
+            \digraph[scale=0.5]{g231}{
+                node [shape = none]; 0;
+                node [shape = doublecircle]; 1;
+    	        node [shape = circle];
+                rankdir=LR; 
+                0 -> 1;
+                1 -> 2 [label = "a"];
+                2 -> 1 [label = "a"];
+                1 -> 1 [label = "b"];
+                2 -> 2 [label = "b"];
+            }
+            \digraph[scale=0.5]{g232}{
+                node [shape = none]; 0;
+                node [shape = doublecircle]; 1;
+    	        node [shape = circle];
+                rankdir=LR; 
+                0 -> 1;
+                1 -> 1 [label = "a"];
+                2 -> 2 [label = "a"];
+                3 -> 3 [label = "a"];
+                1 -> 2 [label = "b"];
+                2 -> 3 [label = "b"];
+                3 -> 1 [label = "b"];
+            }
+        \end{center}
+        Тогда \(L_3=A \times B\), имеем \(\Sigma=\{a,b\}\), \(s=11\) и \(T=\{11\}\). Переходы для произведения автоматов:
+        \begin{center}
+            \begin{tabular}{ |c|c|c|c| } 
+                \hline
+                \(A\) & \(B\) & переход по \(a\) & переход по \(b\) \\
+                \hline
+                1 & 1 & 21 & 12 \\
+                \hline
+                2 & 2 & 12 & 23 \\
+                \hline
+                1 & 2 & 22 & 13 \\
+                \hline
+                2 & 3 & 13 & 21 \\
+                \hline
+                1 & 3 & 23 & 11 \\
+                \hline
+                2 & 1 & 11 & 22 \\
+                \hline
+            \end{tabular}
+        \end{center}
+        После прямого произведения двух автоматов получим окончательный ответ:
+        \begin{center}
+            \digraph[scale=0.5]{g233}{
+                node [shape = none]; 0;
+                node [shape = doublecircle]; 11;
+    	        node [shape = circle];
+                rankdir=LR; 
+                0 -> 11;
+                11 -> 21 [label = "a"];
+                11 -> 12 [label = "b"];
+                22 -> 12 [label = "a"];
+                22 -> 23 [label = "b"];
+                12 -> 22 [label = "a"];
+                12 -> 13 [label = "b"];
+                23 -> 13 [label = "a"];
+                23 -> 21 [label = "b"];
+                13 -> 23 [label = "a"];
+                13 -> 11 [label = "b"];
+                21 -> 11 [label = "a"];
+                21 -> 22 [label = "b"];
+            }
+        \end{center}
+        
+        \item \(L_4= \neg L_3\) \\
+        Имеем, \(T_4= Q_3 \setminus T_3 = \{ 12, 13, 21, 22, 23 \} \), тогда можно легко построить ДКА:
+        \begin{center}
+            \digraph[scale=0.5]{g23}{
+                node [shape = none]; 0;
+                node [shape = doublecircle]; 12 13 21 22 23;
+    	        node [shape = circle]; 11;
+                rankdir=LR; 
+                0 -> 11;
+                11 -> 21 [label = "a"];
+                11 -> 12 [label = "b"];
+                22 -> 12 [label = "a"];
+                22 -> 23 [label = "b"];
+                12 -> 22 [label = "a"];
+                12 -> 13 [label = "b"];
+                23 -> 13 [label = "a"];
+                23 -> 21 [label = "b"];
+                13 -> 23 [label = "a"];
+                13 -> 11 [label = "b"];
+                21 -> 11 [label = "a"];
+                21 -> 22 [label = "b"];
+            }
+        \end{center}
+        
+        \item \(L_5= L_2 \setminus L_3\) \\
+        Так как \(L_5= L_2 \setminus L_3 = L_2 \cap \neg L_3 = \neg L_3 \times L_2\), тогда имеем:\\ 
+        \(\Sigma=\{a,b\}\), \(s=\langle11,11\rangle\) и \(T=\{\langle12,42\rangle, \langle13,42\rangle, \langle21,42\rangle, \langle22,42\rangle,\langle23,42\rangle\}\)\\
+        Выпишем переходы для \(L_5\): \begin{center}
+            \begin{tabular}{ |c|c|c|c|c| } 
+                \hline
+                \(\neg L_3\) & \(L_2\) & переход по \(a\) & переход по \(b\) \\
+                \hline
+                11 & 11 & 21, 22 & 12, 22 \\
+                \hline 
+                11 & 22 & 21, 31 & 12, 31 \\
+                \hline
+                11 & 31 & 21, 42 & 12, 42 \\
+                \hline
+                11 & 42 & 21, 41 & 12, 41 \\
+                \hline
+                11 & 41 & 21, 42 & 12, 42 \\
+                \hline\hline
+                12 & 11 & 22, 22 & 13, 22 \\
+                \hline
+                12 & 22 & 22, 31 & 13, 31 \\
+                \hline
+                12 & 31 & 22, 42 & 13, 42 \\
+                \hline
+                12 & 42 & 22, 41 & 13, 41 \\
+                \hline
+                12 & 41 & 22, 42 & 13, 42 \\
+                \hline\hline
+                13 & 11 & 23, 22 & 11, 22  \\
+                \hline
+                13 & 22 & 23, 31 & 11, 31 \\
+                \hline
+                13 & 31 & 23, 42 & 11, 42 \\
+                \hline
+                13 & 42 & 23, 41 & 11, 41 \\
+                \hline
+                13 & 41 & 23, 42 & 11, 42 \\
+                \hline\hline
+                21 & 11 & 11, 22 & 22, 22 \\
+                \hline
+                21 & 22 & 11, 31 & 22, 31 \\
+                \hline
+                21 & 31 & 11, 42 & 22, 42 \\
+                \hline
+                21 & 42 & 11, 41 & 22, 41 \\
+                \hline
+                21 & 41 & 11, 42  & 22, 42 \\
+                \hline\hline
+                22 & 11 & 12, 22 & 23, 22 \\
+                \hline
+                22 & 22 & 12, 31 & 23, 31 \\
+                \hline
+                22 & 31 & 12, 42 & 23, 42 \\
+                \hline
+                22 & 42 & 12, 41 & 23, 41 \\
+                \hline
+                22 & 41 & 12, 42 & 23, 42 \\
+                \hline\hline
+                23 & 11 & 13, 22 & 21, 22 \\
+                \hline
+                23 & 22 & 13, 31 & 21, 31 \\
+                \hline
+                23 & 31 & 13, 42 & 21, 42 \\
+                \hline
+                23 & 42 & 13, 41 & 21, 41 \\
+                \hline
+                23 & 41 & 13, 42 & 21, 42 \\
+                \hline
+            \end{tabular}
+        \end{center} 
+        
+    \end{enumerate}
+     
+
+\end{document}

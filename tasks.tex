@@ -89,7 +89,7 @@
             \begin{tabular}{ |c|c|c|c| } 
                 \hline
                 \(A\) & \(B\) & переход по \(a\) & переход по \(b\) \\
-                \hline
+                \hline\hline
                 1 & 1 & 21 & 12 \\
                 \hline
                 2 & 2 & 32 & 23 \\
@@ -146,10 +146,8 @@
                 node [shape = doublecircle]; 1;
                 rankdir=LR; 
                 0 -> 1;
-                1 -> 1 [label = "a,b"];
             }  
         \end{center}
-        Строить граф для данного ДКА нецелесообразно, т.к. он будет слишком большим.
     \end{enumerate}
     
     \section*{Задание 2}
@@ -455,7 +453,7 @@
             }
         \end{center}
         
-        Так как \(L_5= L_2 \setminus L_3 = L_2 \cap \neg L_3 = \neg L_3 \times L_2\), тогда имеем:\\ \(\Sigma=\{a,b\}\), \(s=\langle11,11\rangle\) и \(T=\{42, 43, 44, 45, 46\}\). Выпишем переходы для \(L_5\): 
+        Так как \(L_5= L_2 \setminus L_3 = L_2 \cap \neg L_3 = \neg L_3 \times L_2\), тогда имеем:\\ \(\Sigma=\{a,b\}\), \(s=11\) и \(T=\{42, 43, 44, 45, 46\}\). Выпишем переходы для \(L_5\): 
         \begin{center}
             \begin{tabular}{ |c|c|c|c|c| } 
                 \hline
@@ -652,7 +650,7 @@
         \end{center}
         Построим эквивалентный ДКА по алгоритму Томпсона:\\
         \begin{center}
-             \begin{tabular}{ |c|c|c| } 
+            \begin{tabular}{ |c|c|c| } 
                 \hline
                 \(Q\) & \(a\) & \(b\) \\
                 \hline\hline
@@ -668,7 +666,7 @@
                 \hline
             \end{tabular}
         \end{center}
-        Получили следующий детерминированный автомат, он минимальный:
+        Получили следующий детерминированный автомат:
         \begin{center}
             \digraph[scale=0.5]{g322}{
                 node [shape = none]; 0;
@@ -685,12 +683,236 @@
                 3 -> 2 [label = "b"];
             }  
         \end{center}
+        Определим пары различимых состояний и попробуем минимизировать полученный автомат:
+        \begin{center}
+            \begin{tabular}{ |c||c|c|c|c|c|c| } 
+                \hline
+                  & 1 & 2 & 3 & 35 & 4 \\
+                \hline\hline
+                1  &   & + & + & + & + \\
+                \hline
+                2  & + &  & + & + & + \\
+                \hline
+                3  & + & + &  &  & + \\
+                \hline
+                35 & + & + &  &  & + \\
+                \hline
+                4 & + & + & + & + &  \\
+                \hline
+            \end{tabular}
+        \end{center}
+        Получили различимые состояния \(\{1, 2, 3, 335, 4\}\), перестроим автомат, очевидно, что он минимальный:
+        \begin{center}
+            \digraph[scale=0.5]{g323}{
+                node [shape = none]; 0;
+                node [shape = doublecircle]; 2;
+                node [shape = circle];
+                rankdir=LR; 
+                0 -> 1;
+                1 -> 2 [label = "a"];
+                2 -> 335 [label = "a"];
+                335 -> 4 [label = "a"];
+                335 -> 2 [label = "b"];
+                4 -> 335 [label = "b"];
+            }  
+        \end{center}
+        
+        \item \((a + (a + b)(a + b)b)^*\)\\
+        Построим НКА:
+        \begin{center}
+            \digraph[scale=0.5]{g341}{
+                node [shape = none]; 0;
+                node [shape = doublecircle]; 1;
+                node [shape = circle];
+                rankdir=LR; 
+                0 -> 1;
+                1 -> 1 [label = "a"];
+                1 -> 2 [label = "a, b"];
+                2 -> 3 [label = "a, b"];
+                3 -> 1 [label = "b"];
+            }  
+        \end{center}
+        Построим эквивалентный ДКА по алгоритму Томпсона:\\
+        \begin{center}
+            \begin{tabular}{ |c|c|c| } 
+                \hline
+                \(Q\) & \(a\) & \(b\) \\
+                \hline\hline
+                1 & 12 & 2 \\
+                \hline
+                12 & 123 & 23 \\
+                \hline
+                2 & 3 & 3 \\
+                \hline
+                123 & 123 & 123 \\
+                \hline
+                23 & 3 & 13 \\
+                \hline
+                3 & - & 1 \\
+                \hline
+                13 & 12 & 12 \\
+                \hline
+            \end{tabular}
+        \end{center}
+        Получили следующий детерминированный автомат:
+        \begin{center}
+            \digraph[scale=0.5]{g342}{
+                node [shape = none]; 0;
+                node [shape = doublecircle]; 1 12 13 123;
+                node [shape = circle];
+                rankdir=LR; 
+                0 -> 1;
+                1 -> 12 [label = "a"];
+                1 -> 2 [label = "b"];
+                12 -> 123 [label = "a"];
+                12 -> 23 [label = "b"];
+                2 -> 3 [label = "a, b"];
+                123 -> 123 [label = "a, b"];
+                23 -> 3 [label = "a"];
+                23 -> 13 [label = "b"];
+                3 -> 1 [label = "b"];
+                13 -> 12 [label = "a, b"];
+            }  
+        \end{center}
+        Определим пары различимых состояний и попробуем минимизировать полученный автомат:
+        \begin{center}
+            \begin{tabular}{ |c||c|c|c|c|c|c|c|c|c| } 
+                \hline
+                    & 1 & 12 & 13 & 123 & 2 & 23 & 3 \\
+                \hline\hline
+                1   &   &   &     &     & + &  + & + \\
+                \hline
+                12  &   &   &     &     & + &  + & + \\
+                \hline
+                13  &   &   &     &     & + &  + & + \\
+                \hline
+                123 &   &   &     &     & + &  + & + \\
+                \hline
+                2   & + & + &  +  &  +  &   &    & + \\
+                \hline
+                23  & + & + &  +  &  +  &   &    & + \\
+                \hline
+                3   & + & + &  +  &  +  & + & +  &   \\
+                \hline
+            \end{tabular}
+        \end{center}
         
         \item \((b+c)((ab)^*c + (ba)^*)^*\)\\
+        Сразу можем построить ДКА:
+        \begin{center}
+            \digraph[scale=0.5]{g331}{
+                node [shape = none]; 0;
+                node [shape = doublecircle]; 2 5 7;
+                node [shape = circle];
+                rankdir=LR; 
+                0 -> 1;
+                1 -> 2 [label = "b, c"];
+                2 -> 3 [label = "a"];
+                2 -> 6 [label = "b"];
+                3 -> 4 [label = "b"];
+                4 -> 5 [label = "c"];
+                4 -> 3 [label = "a"];
+                5 -> 3 [label = "a"];
+                5 -> 6 [label = "b"];
+                6 -> 7 [label = "a"];
+                7 -> 3 [label = "a"];
+                7 -> 6 [label = "b"];
+            }  
+        \end{center}
+        Определим пары различимых состояний и попробуем минимизировать полученный автомат:
+        \begin{center}
+            \begin{tabular}{ |c||c|c|c|c|c|c|c|c|c| } 
+                \hline
+                  & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\
+                \hline\hline
+                1 &   & + & + & + & + & + & + \\
+                \hline
+                2 & + &   & + & + &   & + &   \\
+                \hline
+                3 & + & + &   & + & + & + & + \\
+                \hline
+                4 & + & + & + &   & + & + & + \\
+                \hline
+                5 & + &   & + & + &   & + &   \\
+                \hline
+                6 & + & + & + & + & + &   & + \\
+                \hline
+                7 & + &   & + & + &   & + &   \\
+                \hline
+            \end{tabular}
+        \end{center}
+        Получили различимые состояния \(\{1, 257, 3, 4, 5, 6\}\),  перестроим автомат, очевидно, что он минимальный:
+        \begin{center}
+            \digraph[scale=0.5]{g332}{
+                node [shape = none]; 0;
+                node [shape = doublecircle]; 257;
+                node [shape = circle];
+                rankdir=LR; 
+                0 -> 1;
+                1 -> 257 [label = "b, c"];
+                257 -> 3 [label = "a"];
+                257 -> 6 [label = "b"];
+                3 -> 4 [label = "b"];
+                4 -> 257 [label = "c"];
+                4 -> 3 [label = "a"];
+                6 -> 257 [label = "a"];
+            }  
+        \end{center}
+        
+        \item \((a+b)^+(aa + abab + bb + baba)(a+b)^+\)\\
+        Построим НКА:
+        \begin{center}
+            \digraph[scale=0.5]{g351}{
+                node [shape = none]; 0;
+                node [shape = doublecircle]; 13;
+                node [shape = circle];
+                rankdir=LR; 
+                0 -> 1;
+                1 -> 2 [label = "a, b"];
+                2 -> 1 [label = "a, b"];
+                2 -> 3 [label = "a"];
+                2 -> 8 [label = "b"];
+                3 -> 4 [label = "a"];
+                3 -> 5 [label = "b"];
+                4 -> 13 [label = "a, b"];
+                5 -> 6 [label = "a"];
+                6 -> 7 [label = "b"];
+                7 -> 13 [label = "a, b"];
+                8 -> 9 [label = "b"];
+                8 -> 10 [label = "a"];
+                9 -> 13 [label = "a, b"];
+                10 -> 11 [label = "b"];
+                11 -> 12 [label = "a"];
+                12 -> 13 [label = "a, b"];
+            }  
+        \end{center}
+         Построим эквивалентный ДКА по алгоритму Томпсона:\\
+        \begin{center}
+            \begin{tabular}{ |c|c|c| } 
+                \hline
+                \(Q\) & \(a\) & \(b\) \\
+                \hline\hline
+                1 & 2 & 2 \\
+                \hline
+                2 & 13 & 18 \\
+                \hline
+                13 & 3 & 3 \\
+                \hline
+                123 & 123 & 123 \\
+                \hline
+                23 & 3 & 13 \\
+                \hline
+                3 & - & 1 \\
+                \hline
+                13 & 12 & 12 \\
+                \hline
+            \end{tabular}
+        \end{center}
+
     \end{enumerate} 
     
     \section*{Задание 4}
-    Определить, является ли следующие языки регулярными или нет:\\
+    Определить, является ли следующие языки регулярными или нет:
 
     \begin{enumerate}
         \item \(L=\{(aab)^{n}b(aba)^{m} : n \geqslant 0, m \geqslant 0\}\)\\
@@ -759,6 +981,5 @@
         Лемма не выполняется, значит, \(L\) не регулярный язык.
         
     \end{enumerate}
-     
 
 \end{document}

@@ -13,6 +13,7 @@
 \usepackage[pdf]{graphviz}
 \usepackage{morewrites}
 
+
 \usepackage{xpatch}
 \makeatletter
 \newcommand*{\addFileDependency}[1]{% argument=file name and extension
@@ -431,7 +432,7 @@
         \end{center}
         
         \item \(L_5 = L_2 \setminus L_3\) \\
-        Для построения этого автомата используем упрощённую версию автомата \(L_2\), которая была получена в пункте 2 этого задания.         Перепишем названия узлов графов \(L_2\) и \(\neg L_3\):
+        Для построения этого автомата используем упрощённую версию автомата \(L_2\), которая была получена в пункте 2 этого задания. Для удобства дальнейших преобразований, перенумеруем названия узлов графа \(\neg L_3\):
         \begin{center}
             \digraph[scale=0.5]{g252}{
             	rankdir=LR; 
@@ -452,7 +453,6 @@
             	6 -> 4 [label = "b"];
             	6 -> 3 [label = "a"];
             }
-
         \end{center}
         
         Так как \(L_5= L_2 \setminus L_3 = L_2 \cap \neg L_3 = \neg L_3 \times L_2\), тогда имеем:\\ \(\Sigma=\{a,b\}\), \(s=\langle11,11\rangle\) и \(T=\{42, 43, 44, 45, 46\}\). Выпишем переходы для \(L_5\): 
@@ -616,7 +616,7 @@
                 \hline
             \end{tabular}
         \end{center}
-        Получили следующий детерминированный автомат:
+        Получили минимальный и детерминированный автомат:
         \begin{center}
             \digraph[scale=0.5]{g313}{
                 node [shape = none]; 0;
@@ -686,7 +686,7 @@
             }  
         \end{center}
         
-        \item  
+        \item \((b+c)((ab)^*c + (ba)^*)^*\)\\
     \end{enumerate} 
     
     \section*{Задание 4}
@@ -716,12 +716,48 @@
         \end{center}
     
         \item \(L = \{uaav : u \in \{a, b\}^*, \; v \in \{a, b\}^*, |u|_b \geqslant |v|_a\}\)\\
-        Применим лемму о разрастании. Зафиксируем \(\forall n \in \mathbb{N} \) и рассмотрим слово \(\omega = b^naaa^n, \; |\omega| = 2n + 2 \geq n\). Теперь рассмотрим все разбиения этого слова \(\omega = xyz\) такие, что \(|y| \neq 0, \; |xy| \leq n\):
+        Применим лемму о разрастании. Зафиксируем \(\forall n \in \mathbb{N} \) и рассмотрим слово \(\omega = b^{n}aaa^{n}, \; |\omega| = 2n + 2 \geq n\). Теперь рассмотрим все разбиения этого слова \(\omega = xyz\) такие, что \(|y| \neq 0, \; |xy| \leq n\):
         $$x = b^{k}, \; y = b^{l}, \; z = b^{n - k - l}aaa^n,$$ \begin{center}
             где \(1 \leq k + l \leq n \; \wedge \; l > 0\)
         \end{center} 
         Дргуих разбиенний, удовлетворяющих данным условиям, нет.
-        Для любого из таких разбиений слово \(xy^0z \notin L\). Получили противоречие, лемма не выполняется, значит, \(L\) не регулярный язык.
+        Для любого из таких разбиений слово \(xy^0z \notin L\). Лемма не выполняется, значит, \(L\) не регулярный язык.
+        
+        \item \(L = \{a^mw : w \in \{a, b\}^{*}, \; 1 \geqslant |w|_b \geqslant m\}\)\\
+        Применим лемму о разрастании. Зафиксируем \(\forall n \in \mathbb{N} \) и рассмотрим слово \(\omega = a^nb^n, \; |\omega| = 2n \geqslant n\). Теперь рассмотрим все разбиения этого слова \(\omega = xyz\) такие, что \(|y| \neq 0, \; |xy| \leq n\):
+        $$x = a^{l}, \; y = a^{m}, \; z = a^{n-l-m}b^{n},$$ 
+        \begin{center}
+            где \(l + k \leqslant n \; \wedge \; m \ne 0\)
+        \end{center} 
+        Дргуих разбиенний, удовлетворяющих данным условиям, нет. Теперь выполним накачку: 
+        $$xy^{i}z = a^{l}(a^{m})^{i}a^{n-l-m}b^{n} = a^{n-mi}b^{n} \notin L, \; i 
+        \geqslant 0 \in \mathbb{N} $$
+        Лемма не выполняется, значит, \(L\) не регулярный язык.
+        
+        \item \(L = \{a^{k}b^{m}a^{n} : k = n \vee m > 0\}\)\\
+        Применим лемму о разрастании. Зафиксируем \(\forall n \in \mathbb{N} \) и рассмотрим слово \(\omega = a^nba^n, \; |\omega| = 2n + 1 \geqslant n\). Теперь рассмотрим все разбиения этого слова \(\omega = xyz\) такие, что \(|y| \neq 0, \; |xy| \leq n\):
+        $$x = a^{k}, \; y = a^{m}, \; z = a^{n-k-m}ba^{n},$$ 
+        \begin{center}
+            где \(k + m \leqslant n \; \wedge \; m \ne 0\)
+        \end{center} 
+        Дргуих разбиенний, удовлетворяющих данным условиям, нет.
+        Теперь выполним накачку: 
+        $$xy^{i}z = a^{k}(a^{m})^{i}a^{n-k-m}ba^{n} = a^{n+m(i-1)}ba^{n} \notin L, \; i 
+        \geqslant 2 \in \mathbb{N} $$
+        Получили противоречие, лемма не выполняется, значит, \(L\) не регулярный язык.
+        
+        \item \(L = \{ucv : u \in \{a, b\}^*, \; v \in \{a, b\}^*, u \ne v^R \}\)\\
+        Применим лемму о разрастании. Зафиксируем \(\forall n \in \mathbb{N} \) и рассмотрим слово \(\omega = (ab)^nc(ab)^n = \alpha_1\alpha_2...\alpha_{4n+1}, \; |\omega| = 4n + 1 \geqslant n\). Теперь рассмотрим все разбиения этого слова \(\omega = xyz\) такие, что \(|y| \neq 0, \; |xy| \leq n\):
+        $$x = \alpha_1\alpha_2...\alpha_k, \; y = \alpha_{k+1}...\alpha_{k+m}, \; z = \alpha_{k+m+1}...\alpha_{4n+1}c(ab)^n,$$
+        \begin{center}
+            где \(k + m \leqslant n \; \wedge \; m \ne 0\)
+        \end{center} 
+        Дргуих разбиенний, удовлетворяющих данным условиям, нет. Теперь выполним накачку: 
+        $$xy^{i}z = (\alpha_1\alpha_2...\alpha_k)(\alpha_{k+1}...\alpha_{k+m})^i(\alpha_{k+m+1}...\alpha_{4n+1}c(ab)^n)$$
+        При \(i = 2\) имеем:
+        $$xy^{2}z = (\alpha_1\alpha_2...\alpha_k)(\alpha_{k+1}...\alpha_{k+m})^2(\alpha_{k+m+1}...\alpha_{4n+1}c(ab)^n) \notin L$$
+        Лемма не выполняется, значит, \(L\) не регулярный язык.
+        
     \end{enumerate}
      
 

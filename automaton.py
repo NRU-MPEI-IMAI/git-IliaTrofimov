@@ -118,6 +118,11 @@ class DFA:
         """
         return self._cross_product(graph.negation(), True)
 
+    def reset_labels(self):
+        """ Sets all label equal to their indexes """
+        for i in range(self.states_count()):
+            self.labels[i] = str(i)
+
     def save(self, dot_name: str, image_name: str = None, img_fmt: str = "png", clear: bool = True):
         """
         Writes graph to .dot file or create. Requires graphiz to be installed on your machine and dot.exe added to PATH\n
